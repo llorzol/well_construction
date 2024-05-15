@@ -1,0 +1,135 @@
+<!DOCTYPE html> 
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+
+    <title id="title">USGS Well Construction Grapher</title>
+
+    <!-- meta -->
+    <!--#include virtual="includes/meta_inc.html" -->
+
+    <!-- css -->
+    <!--#include virtual="DrupalVisID/includes/meta-css.html" -->
+    <!--#include virtual="includes/css_inc.html" -->
+    <!-- end css -->
+
+  </head>
+
+  <body id="offwhite">
+
+    <!--#include virtual="DrupalVisID/includes/header_WRET.html"-->
+
+    <!-- Container Section -->
+    <div class="container">
+
+      <!-- Page Heading/Breadcrumbs -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="clear title fs-2 mt-3 mb-3">U.S. Geological Survey</div>
+          <div class="clear title fs-2 mb-3">USGS Well Construction Grapher</div>
+        </div>
+      </div>
+      <!-- End Page Heading/Breadcrumbs -->
+
+      <!-- Nav Bar -->
+      <div class="row mb-3">
+        <div class="col-sm-12">
+          <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <div class="container-fluid">
+              <a class="navbar-brand text-start" href="javascript:void(0)">
+                <img class="hydrographLogo" alt="Hydrograph Logo" src="images/hydrographLogo.png">
+                USGS Well Construction Grapher
+              </a>
+
+              <ul class="nav navbar-nav">
+
+                <!--About-->
+                <li class="nav-item">
+                  <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                    <span id="aboutHelp" data-tooltip="on" data-placement="right">
+                      About
+                    </span>
+                  </a>
+                </li>
+
+                <!--Download-->
+                <li class="nav-item float-xs-right">
+                  <a class="nav-link" href="#">
+                    <span id="downloadHelp" data-tooltip="on" data-placement="bottom">
+                      Download Data
+                    </span>
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+          </nav>
+        </div> <!-- <div class="col-sm-12"> -->
+        </div> <!-- <div class="row"> -->
+
+          <!-- Page content wrapper -->
+          <div class="row">
+            <div class="col-sm-12">
+              <div id="plot_title" class="text-start"></div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <svg id="svgCanvas"></svg>
+            </div>
+          </div>
+          
+        </div>
+      </div> <!-- <div class="container-fluid"> -->
+  
+      <!-- USGS Footer Template -->
+      <!--#include virtual="DrupalVisID/includes/footer_WRET.html"-->
+
+      <!-- Start About Modal -->
+      <div id="aboutModal" class="modal fade mx-auto rounded-5">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <span class="modal-title">USGS Discrete Groundwater Grapher</span>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="btn-group" role="group" aria-label="First group">
+                <button id="welcome" type="button" class="aboutButtons btn btn-secondary">Welcome</button>
+                <button id="graphFeatures" type="button" class="aboutButtons btn btn-secondary">Graph Features</button>
+                <button id="contacts" type="button" class="aboutButtons btn btn-secondary">Contact Us</button>
+              </div>
+
+              <!-- /.aboutContent -->
+              <div id="aboutContent" class="aboutContent"></div>
+
+            </div><!-- /.modal-body -->
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+      <!-- Local versions of required scripts -->
+      <!--[if IE]><script language="javascript" type="text/javascript" src="javascripts/flot/excanvas.min.js"></script><![endif]-->
+      <script language="javascript" type="text/javascript" src="javascripts/required/jquery.min.js"></script>
+
+      <!-- Latest compiled and minified JavaScript -->
+      <script language="javascript" type="text/javascript" src="javascripts/required/popper.min.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/required/tether.min.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/required/bootstrap.min.js"></script>
+
+      <!-- d3 scripts -->
+      <script language="javascript" type="text/javascript" src="javascripts/required/d3.min.js"></script>
+
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/modal.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/webRequest.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/downloadData.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/aboutContent.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/d3.AxisFunctions.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/d3.well_construction.js"></script>
+      <script language="javascript" type="text/javascript" src="javascripts/usgs/mainWellConstruction.js"></script>
+
+  </body>
+</html>
