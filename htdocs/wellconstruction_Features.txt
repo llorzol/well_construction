@@ -1,0 +1,28 @@
+<div class="tutorials">
+ <div class="featureText">
+
+  <hr></hr>
+
+  <div class="text" id="zoom_period_plot">
+   <p> Well Construction Plot </p> 
+   <p><img src="images/well_construction.png"> </p> 
+   <ul>
+    <li>
+     Use this plot to investigate well construction information that has been 
+     collected at a site.
+    </li>
+    <li>
+     Hovering the cursor over an element of the construction in the wellbore column will toggle a popup 
+     that will show the description 
+     and depth information about the specific lithology.
+    </li>
+    <li>
+     Hovering the cursor over the text in the explanation section will highlight 
+     matching construction featured observed in the well bore information.
+    </li>
+   </ul>
+  </div>
+
+ </div>
+</div>
+
