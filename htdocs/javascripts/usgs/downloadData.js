@@ -4,8 +4,8 @@
  * downloadData is a JavaScript library to provide a set of functions to download
  *  site information and measurements.
  *
- * version 2.03
- * January 16, 2024
+ * version 2.04
+ * May 15, 2024
 */
 
 /*
@@ -48,9 +48,9 @@ jQuery("#downloadHelp").click(function()
     {
      downloadLithData(coop_site_no);
     }
-  else if(/well_construction.html$/i.test(pathname))
+  else if(/well_construction/i.test(pathname))
     {
-     requestWellConstructionData(agency_cd, site_no, coop_site_no, station_nm);
+     downloadWellConstructionData(agency_cd, site_no, coop_site_no, station_nm);
     }
   else if(/discrete_wq/i.test(pathname))
     {
@@ -528,6 +528,335 @@ function downloadLithData(coop_site_no)
 
    closeModal();
   }
+
+// Output data
+//
+function downloadWellConstructionData(agency_cd, site_no, coop_site_no, station_nm)
+  {
+   console.log("downloadWellConstructionData");
+   console.log(myConstructionData);
+
+   message = "Preparing well construction information for site " + site_no;
+   openModal(message);
+   fadeModal(2000)
+
+   // Well construction information
+   //
+   SiteFileData               = myConstructionData.sitefile;
+   wellConstruction           = myConstructionData.well_construction;
+   geohydrologicData          = myConstructionData.gw_geoh;
+  
+   // Site information
+   //
+   agency_cd                  = SiteFileData.agency_cd;
+   site_no                    = SiteFileData.site_no;
+   station_nm                 = SiteFileData.station_nm;
+
+   // Modify header lines
+   // 
+   headerLines.push('# retrieved: ' + (new Date()).toString())
+   headerLines.push('#');
+   headerLines.push('# US Geological Survey well construction');
+   headerLines.push('#');
+   headerLines.push('# Data for the following 1 site(s) are contained in this file');
+
+   // Change header line
+   //
+   var titleList = [];
+   if(agency_cd)
+     {
+      titleList.push(agency_cd);
+     }
+   if(site_no)
+     {
+      titleList.push(site_no);
+     }
+   if(coop_site_no)
+     {
+      titleList.push(coop_site_no);
+     }
+   if(station_nm)
+     {
+      titleList.push(station_nm);
+     }
+   headerLines.push('#   Site ' + titleList.join(" "));
+
+      // Parse construction output
+      //
+      var wellRecord = wellConstruction.gw_cons;
+
+      if(wellRecord) {
+
+          var consFields      = [
+              'site_no',
+              'cons_seq_nu',
+              'cons_src_cd',
+              'finish_cd',
+              'finish_ds',
+              'seal_cd',
+              'seal_depth_va',
+              'seal_ds'
+          ];
+
+          headerLines.push('# -----------------------------------------------------------------------------------');
+          headerLines.push('#');
+          headerLines.push('# The fields in this file include:');
+          headerLines.push('# ---------------------------------');
+          headerLines.push('# Parent Construction section');
+          headerLines.push('# site_no          USGS site number');
+          headerLines.push('# cons_seq_nu      USGS Sequence Number of Parent Construction');
+          headerLines.push('# cons_src_cd      Source of construction data');
+          headerLines.push('# finish_cd        Type of finish');
+          headerLines.push('# finish_ds        Finish description');
+          headerLines.push('# seal_cd          Type of seal');
+          headerLines.push('# seal_depth_va    Depth to bottom of seal');
+          headerLines.push('# seal_ds          Seal description');
+          headerLines.push('#');
+
+          var consData  = wellRecord.slice();
+          var dataLines = [];
+
+          var myFields     = consFields;
+          headerLines.push(myFields.join("\t"));
+
+          while ( consData.length > 0 ) {
+
+              var myRecords     = consData.shift();
+              var dataLine      = [];
+              dataLine.push(site_no);
+
+              for(var i = 0; i < myFields.length; i++)
+              {
+                  var Record = myRecords[myFields[i]];
+                  dataLine.push(Record);
+              }
+              dataLines.push(dataLine.join("\t"));
+          }
+          headerLines.push(dataLines.join("\n"));
+          headerLines.push('#');
+      }
+
+      // Loop hole construction
+      //
+      var wellRecord = wellConstruction.gw_hole;
+
+      if(wellRecord) {
+
+          var holeFields      = [
+              'site_no',
+              'cons_seq_nu',
+              'hole_seq_nu',
+              'hole_top_va',
+              'hole_bottom_va',
+              'hole_dia_va',
+          ];
+
+          headerLines.push('# Hole Construction section');
+          headerLines.push('# site_no          USGS site number');
+          headerLines.push('# cons_seq_nu      USGS Sequence Number of Parent Construction');
+          headerLines.push('# hole_seq_nu      USGS Sequence Number of Hole Construction');
+          headerLines.push('# hole_top_va      Depth to top of this interval');
+          headerLines.push('# hole_bottom_va   Depth to bottom of this interval');
+          headerLines.push('# hole_dia_va      Diameter of this interval');
+          headerLines.push('#');
+
+          var consData     = wellRecord.slice();
+          var dataLines    = [];
+
+          var myFields     = holeFields;
+          headerLines.push(myFields.join("\t"));
+
+          while ( consData.length > 0 ) {
+
+              var myRecords     = consData.shift();
+              var dataLine      = [];
+              dataLine.push(site_no);
+
+              for(var i = 0; i < myFields.length; i++)
+              {
+                  var Record = myRecords[myFields[i]];
+                  dataLine.push(Record);
+              }
+              dataLines.push(dataLine.join("\t"));
+          }
+          headerLines.push(dataLines.join("\n"));
+          headerLines.push('#');
+      }
+
+      // Loop casing construction
+      //
+      var wellRecord = wellConstruction.gw_csng;
+
+      if(wellRecord) {
+
+          var csngFields      = [
+                          'site_no',
+                          'cons_seq_nu',
+                          'csng_seq_nu',
+                          'csng_top_va',
+                          'csng_bottom_va',
+                          'csng_dia_va',
+                          'csng_material_cd',
+                          'csng_material_ds'
+          ];
+
+          headerLines.push('# Casing Construction section');
+          headerLines.push('# site_no          USGS site number');
+          headerLines.push('# cons_seq_nu      USGS Sequence Number of Parent Construction');
+          headerLines.push('# csng_seq_nu      USGS Sequence Number of Casing Construction');
+          headerLines.push('# csng_top_va      Depth to top of this casing interval');
+          headerLines.push('# csng_bottom_va   Depth to bottom of this casing interval');
+          headerLines.push('# csng_dia_va      Diameter of this casing interval');
+          headerLines.push('# csng_material_cd Casing material');
+          headerLines.push('# csng_ds          Casing description');
+          headerLines.push('#');
+
+          var consData     = wellRecord.slice();
+          var dataLines    = [];
+
+          var myFields     = csngFields;
+          headerLines.push(myFields.join("\t"));
+
+          while ( consData.length > 0 ) {
+
+              var myRecords     = consData.shift();
+              var dataLine      = [];
+              dataLine.push(site_no);
+
+              for(var i = 0; i < myFields.length; i++)
+              {
+                  var Record = myRecords[myFields[i]];
+                  dataLine.push(Record);
+              }
+              dataLines.push(dataLine.join("\t"));
+          }
+          headerLines.push(dataLines.join("\n"));
+          headerLines.push('#');
+      }
+
+      // Loop openings construction
+      //
+      var wellRecord = wellConstruction.gw_open;
+
+      if(wellRecord) {
+
+          var openFields      = [
+              'site_no',
+              'cons_seq_nu',
+              'open_seq_nu',
+              'open_top_va',
+              'open_bottom_va',
+              'open_dia_va',
+              'open_material_cd',
+              'open_ds'
+          ];
+          headerLines.push('# Openings Construction section');
+          headerLines.push('# site_no          USGS site number');
+          headerLines.push('# cons_seq_nu      USGS Sequence Number of Parent Construction');
+          headerLines.push('# open_seq_nu      USGS Sequence Number of Openings Construction');
+          headerLines.push('# open_top_va      Depth to top of this open interval');
+          headerLines.push('# open_bottom_va   Depth to bottom of this open interval');
+          headerLines.push('# open_dia_va      Diameter of this open interval');
+          headerLines.push('# open_material_cd Material in this interval');
+          headerLines.push('# open_ds          Material description');
+          headerLines.push('#');
+
+          var consData     = wellRecord.slice();
+          var dataLines    = [];
+
+          var myFields     = openFields;
+          headerLines.push(myFields.join("\t"));
+
+          while ( consData.length > 0 ) {
+
+              var myRecords     = consData.shift();
+              var dataLine      = [];
+              dataLine.push(site_no);
+
+              for(var i = 0; i < myFields.length; i++)
+              {
+                  var Record = myRecords[myFields[i]];
+                  dataLine.push(Record);
+              }
+              dataLines.push(dataLine.join("\t"));
+          }
+          headerLines.push(dataLines.join("\n"));
+          headerLines.push('#');
+      }
+
+      // Loop geohydrology
+      //
+      if(geohydrologicData) {
+
+          var openFields      = [
+              'site_no',
+              'lith_unit_ds',
+              'lith_unit_cd',
+              'lith_ds',
+              'lith_cd',
+              'lith_top_va',
+              'lith_bottom_va'
+          ];
+          headerLines.push('# Geohydrology section');
+          headerLines.push('# site_no          USGS site number');
+          headerLines.push('# lith_unit_ds     Lithologic description');
+          headerLines.push('# lith_unit_cd     Unit identifier');
+          headerLines.push('# lith_ds          Lithologic modifier');
+          headerLines.push('# lith_cd          Lithology code');
+          headerLines.push('# lith_top_va      Depth to top of interval');
+          headerLines.push('# lith_bottom_va   Depth to bottom of interval');
+          headerLines.push('#');
+
+          var openFields      = [
+              'site_no',
+              'lith_unit_ds',
+              'lith_unit_cd',
+              'lith_ds',
+              'lith_cd',
+              'lith_top_va',
+              'lith_bottom_va'
+          ];
+
+          var geohData     = [];
+          if(geohydrologicData) { geohData = geohydrologicData.slice(); }
+          var dataLines    = [];
+
+          var myFields     = openFields;
+          headerLines.push(myFields.join("\t"));
+
+          while ( geohData.length > 0 ) {
+
+              var myRecord      = geohData.shift();
+              var dataLine      = [];
+
+              dataLine.push(site_no);
+
+              for(var i = 0; i < myFields.length; i++)
+              {
+                  var Record = myRecord[myFields[i]];
+                  dataLine.push(Record);
+              }
+              dataLines.push(dataLine.join("\t"));
+          }
+          headerLines.push(dataLines.join("\n"));
+          headerLines.push('#');
+      }
+      
+   // Output
+   //
+   var myWindow = window.open('', '_blank', '');
+   var myData   = headerLines.join("\n");
+   myData     += "\n";
+
+   jQuery(myWindow.document.body).html('<pre>' + myData + '</pre>');
+
+   // Change title
+   // 
+   jQuery(myWindow.document).prop("title", "Well Construction Information for Site " + titleList.join(" "));
+
+   closeModal();
+  }
+
 // Output WQ data
 //
 function requestWqData(agency_cd, site_no)

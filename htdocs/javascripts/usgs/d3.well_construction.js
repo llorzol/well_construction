@@ -4,8 +4,8 @@
  * D3_Construction is a JavaScript library to provide a set of functions to build
  *  well construction information in svg format.
  *
- * version 2.02
- * May 5, 2024
+ * version 2.04
+ * May 15, 2024
 */
 
 /*
@@ -144,7 +144,7 @@ function plotwellConstruction(myWellConstruction)
 
    // No well construction information
    //
-   if(wellConstruction.length < 1)
+   if(!wellConstruction)
      {
       noLog(svg);
   
@@ -356,8 +356,6 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
 
    // Loop through lithology
    //
-   var tempData     = wellConstruction.slice();
-
    var wellBore     = svgContainer.append("g")
                                   .attr("class", "wellBore")
 
@@ -377,18 +375,18 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
 
    // Loop through construction
    //
-   while ( tempData.length > 0 ) {
+   if (wellConstruction) {
 
-        var wellRecord  = tempData.shift();
+        var wellRecord  = wellConstruction.gw_cons;
         console.log(wellRecord);
 
         // Construction record
         //
-        if(wellRecord.gw_cons)
+        if(wellRecord)
           {
-           for(var i = 0; i < wellRecord.gw_cons.length; i++)
+           for(var i = 0; i < wellRecord.length; i++)
              {
-              var Record         = wellRecord.gw_cons[i];
+              var Record         = wellRecord[i];
 
               if(Record.seal_depth_va.toString().length > 0)
                 {
@@ -473,11 +471,12 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
 
         // Hole record
         //
-        if(wellRecord.gw_hole)
+        var wellRecord  = wellConstruction.gw_hole;
+        if(wellRecord)
           {
-           for(var i = 0; i < wellRecord.gw_hole.length; i++)
+           for(var i = 0; i < wellRecord.length; i++)
              {
-              var Record         = wellRecord.gw_hole[i];
+              var Record         = wellRecord[i];
 
               var hole_top_va    = Record.hole_top_va;
               var hole_bottom_va = Record.hole_bottom_va;
@@ -526,11 +525,12 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
 
         // Casing record
         //
-        if(wellRecord.gw_csng)
+        var wellRecord  = wellConstruction.gw_csng;
+        if(wellRecord)
           {
-           for(var i = 0; i < wellRecord.gw_csng.length; i++)
+           for(var i = 0; i < wellRecord.length; i++)
              {
-              var Record         = wellRecord.gw_csng[i];
+              var Record         = wellRecord[i];
 
               var csng_top_va    = Record.csng_top_va;
               var csng_bottom_va = Record.csng_bottom_va;
@@ -611,11 +611,12 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
 
         // Open interval record
         //
-        if(wellRecord.gw_open)
+        var wellRecord = wellConstruction.gw_open;
+        if(wellRecord)
           {
-           for(var i = 0; i < wellRecord.gw_open.length; i++)
+           for(var i = 0; i < wellRecord.length; i++)
              {
-              var Record         = wellRecord.gw_open[i];
+              var Record         = wellRecord[i];
 
               var open_top_va    = Record.open_top_va;
               var open_bottom_va = Record.open_bottom_va;

@@ -73,7 +73,7 @@ if HardWired is not None:
     #os.environ['QUERY_STRING'] = 'site_no=452335122564301'
     #os.environ['QUERY_STRING'] = 'site_no=453705119513901'
     #os.environ['QUERY_STRING'] = 'site_no=415947121243401'
-    os.environ['QUERY_STRING'] = 'site_no=423245121405001'
+    os.environ['QUERY_STRING'] = 'site_no=422508121161501'
     
 if 'QUERY_STRING' in os.environ:
     queryString = os.environ['QUERY_STRING']
@@ -105,8 +105,8 @@ else:
 debug           = False
 
 program         = "USGS Well Construction Grapher Script"
-version         = "2.02"
-version_date    = "05May2024"
+version         = "2.04"
+version_date    = "15May2024"
 
 program_args    = []
 
@@ -986,7 +986,7 @@ if len(geohD) > 0:
       Geohs.append(json.dumps(geohD[geoh_seq_nu]))
    jsonL.append('"gw_geoh":' + '[' + ",".join(Geohs) + '],')
 
-jsonL.append('"well_construction":' + '[')
+jsonL.append('"well_construction":' + '{')
 
 Records = []
 
@@ -1023,10 +1023,11 @@ for cons_seq_nu in sorted(wellD.keys()):
 
       Record.append('"gw_open":' + '[' + ",".join(Opens) + ']')
 
-   Records.append(" { %s } " % ','.join(Record))
+   #Records.append(" { %s } " % ','.join(Record))
+   Records.append(" %s " % ','.join(Record))
 
 jsonL.append(','.join(Records))
-jsonL.append('],')
+jsonL.append('},')
 
 if depth_max is None:
    jsonL.append('"%s": %s,' % ( "y_max", "null"))

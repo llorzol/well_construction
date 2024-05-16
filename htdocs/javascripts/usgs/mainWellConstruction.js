@@ -1,10 +1,10 @@
-/* Javascript plotting library for jQuery and flot.
+/* Javascript plotting library for D3.
  *
- * Main is a JavaScript library to graph NwisWeb groundwlithology information
+ * Main is a JavaScript library to graph NwisWeb well construction information
  * for a site(s).
  *
- * version 2.02
- * May 5, 2024
+ * version 2.05
+ * May 15, 2024
  */
 
 /*
@@ -150,6 +150,7 @@ function checkSiteNo(site_no) {
 function wellConstructionService(myWellConstruction)
   {
    console.log("wellConstructionService");
+   console.log(myWellConstruction.well_construction);
 
    // Check for well construction
    //
@@ -170,7 +171,7 @@ function wellConstructionService(myWellConstruction)
 
    // Check for well construction
    //
-   if(myWellConstruction.well_construction.length < 1)
+   if(!myWellConstruction.well_construction)
      {
       closeModal();
  
