@@ -4,8 +4,8 @@
  * d3_AxisFunctions is a JavaScript library to provide a set of functions to build
  *  axes and labelling for well construction and lithology applications in svg format.
  *
- * version 2.01
- * May 18, 2024
+ * version 2.02
+ * May 19, 2024
 */
 
 /*
@@ -206,7 +206,7 @@ function rightElevationAxis(
 
    // Axis label
    //
-   var labelOffset = ( text_length + 10) * text_width;
+   var labelOffset = ( text_length + 5) * text_width;
    var label       = "translate("
    label          += [x_box_max + labelOffset, (y_box_max + y_box_min ) * 0.5].join(", ");
    label          += ") rotate(-90)";
