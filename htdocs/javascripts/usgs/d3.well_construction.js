@@ -4,8 +4,8 @@
  * D3_Construction is a JavaScript library to provide a set of functions to build
  *  well construction information in svg format.
  *
- * version 2.04
- * May 15, 2024
+ * version 2.05
+ * May 18, 2024
 */
 
 /*
@@ -426,6 +426,7 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
                     Legend.push({ 
                                  'id': ['seal_', seal_code].join(""),
                                  'description': legendEntry,
+                                 'color': seal_color,
                                  'image': fill_id
                                 })
                     }
@@ -566,6 +567,7 @@ function addWellConstruction(svgContainer, wellConstruction, tooltip)
                  Legend.push({ 
                               'id': ['casing_', csng_code].join(""),
                               'description': legendEntry,
+                              'color': csng_color,
                               'image': fill_id
                              })
                  }
@@ -731,6 +733,8 @@ function addLegend(svgContainer, LegendList, Legend)
         var id          = Record.id
         var image       = Record.image
         var url         = 'url(#' + image + ')'
+        var color       = null
+        if(Record.color) { url = Record.color}
 
         var myRect      = descriptions.append("rect")
                                       //.attr('id', id)

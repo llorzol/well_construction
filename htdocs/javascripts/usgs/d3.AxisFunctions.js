@@ -4,8 +4,8 @@
  * d3_AxisFunctions is a JavaScript library to provide a set of functions to build
  *  axes and labelling for well construction and lithology applications in svg format.
  *
- * version 1.17
- * January 19, 2019
+ * version 2.01
+ * May 18, 2024
 */
 
 /*
@@ -125,12 +125,15 @@ function leftAxis(
 
    var myText      = svgContainer.append("text")
                                  .attr("class", "tic_labels")
+                                 .attr("transform","translate([-1000, -1000)")
                                  .text(text_label);
-   var text_width  = myText.node().getComputedTextLength() / text_label.length;
+   var text_width  = myText.node().getComputedTextLength() / text_length;
+   myText.remove()
+   console.log("text_width " + text_width);
 
    // Left axis label
    //
-   var labelOffset = ( text_length + 3 ) * text_width;
+   var labelOffset = ( text_length + 5 ) * text_width;
    var label       = "translate("
    label          += [x_box_min - labelOffset, (y_box_max + y_box_min ) * 0.5].join(", ");
    label          += ") rotate(-90)";
@@ -195,16 +198,18 @@ function rightElevationAxis(
 
    var myText      = svgContainer.append("text")
                                  .attr("class", "tic_labels")
+                                 .attr("transform","translate([-1000, -1000)")
                                  .text(text_label);
-   var text_width  = myText.node().getComputedTextLength() / text_label.length;
+   var text_width  = myText.node().getComputedTextLength() / text_length;
+   myText.remove()
    console.log("text_width " + text_width);
 
    // Axis label
    //
-   var labelOffset = ( text_length + 7 ) * text_width;
+   var labelOffset = ( text_length + 10) * text_width;
    var label       = "translate("
    label          += [x_box_max + labelOffset, (y_box_max + y_box_min ) * 0.5].join(", ");
-   label          += ") rotate(90)";
+   label          += ") rotate(-90)";
 
    var axis_label  = svgContainer.append("g")
                                  .append("text")
