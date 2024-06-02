@@ -4,8 +4,8 @@
  * D3_Construction is a JavaScript library to provide a set of functions to build
  *  well construction information in svg format.
  *
- * version 2.05
- * May 18, 2024
+ * version 2.06
+ * May 30, 2024
 */
 
 /*
@@ -79,7 +79,7 @@ function noLog(svgContainer)
 
 // Plot
 //
-function plotwellConstruction(myWellConstruction)
+function plotwellConstruction(myWellConstruction, myWellLithology)
   {
    console.log("plotwellConstruction");
 
