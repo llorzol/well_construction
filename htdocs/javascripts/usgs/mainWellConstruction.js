@@ -3,8 +3,8 @@
  * Main is a JavaScript library to graph NwisWeb well construction information
  * for a site(s).
  *
- * version 2.05
- * May 15, 2024
+ * version 2.09
+ * May 30, 2024
  */
 
 /*
@@ -33,13 +33,12 @@
 
 // Control for nav bar topics
 //
-jQuery('.noJump').click(function(e){
+jQuery('.noJump').click(function(e) {
+  // Prevent jumping to top of page
+  //
+  e.preventDefault();
 
-   // Prevent jumping to top of page
-   //
-   e.preventDefault();
-
-   });
+});
 
 // Global
 //
@@ -53,7 +52,8 @@ var lsdelev;
 var lsdaccuracy;
 var lsdelevdatum;
 
-var myConstructionData;
+var myWellConstruction;
+var myWellLithology;
 
 var aboutFiles     = {
                       "welcome" :              "wellconstruction_welcome.txt",
@@ -61,96 +61,161 @@ var aboutFiles     = {
                       "contacts" :             "wellconstruction_contacts.txt"
                      };
 
+var message = "Need a NWIS USGS site number, which is a number ";
+message    += "consisting of 15 digits (example 433152121281301). ";
+
 // Prepare when the DOM is ready 
 //
 $(document).ready(function()
  {
    // Current url
    //-------------------------------------------------
-   var url     = new URL(window.location.href);  
-   console.log("Current Url " + window.location.href);
-     
+   var url     = new URL(window.location.href);
+   //console.log("Current Url " + window.location.href);
+
    // Parse
    //-------------------------------------------------
    site_no      = url.searchParams.get('site_no');
    coop_site_no = url.searchParams.get('coop_site_no');
-   station_nm   = url.searchParams.get('station_nm');
-   latitude     = url.searchParams.get('latitude');
-   longitude    = url.searchParams.get('longitude');
-   lsdelev      = url.searchParams.get('lsdelev');
-   lsdaccuracy  = url.searchParams.get('lsdaccuracy');
-   lsdelevdatum = url.searchParams.get('lsdelevdatum');
 
+   // Check arguments
+   //-------------------------------------------------
    if(site_no)
-     {   
-      // Check NWIS site number
-      //
-      site_no = checkSiteNo(site_no)
-
-      // Loading message
-      //
-      message = "Processing well construction information for site " + site_no;
-      openModal(message);
-   
-      // Request for site service information
-      //
-      var column       = "site_no";
-      var request_type = "GET";
-      var script_http  = "/cgi-bin/well_construction/requestWellConstruction.py";
-      var data_http    = column + "=" + site_no;
-         
-      var dataType     = "json";
-         
-      // Web request
-      //
-      webRequest(request_type, script_http, data_http, dataType, wellConstructionService);
+     {
+       if(!checkSiteNo(site_no))
+          {
+            openModal(message);
+            fadeModal(3000);
+            return;
+          }
      }
 
+   else {
+
+     // Loading message
+     //
+     openModal(message);
+     fadeModal(3000);
+   }
+
+   if(coop_site_no)
+     {
+       if(!checkCoopSiteNo(coop_site_no))
+          {
+            return;
+          }
+     }
+
+
+   // Call grapher
+   //-------------------------------------------------
+   if(site_no)
+     {
+      wellConstructionService(site_no, coop_site_no);
+     }
    else
-     {                   
-
-      // Loading message
-      //
-      var message = "Incorrectly formatted USGS site number or OWRD well log ID or CDWR well number: ";
-      message    += "You must use the USGS station numbers, which are a number ";
-      message    += "from 8 to 15 digits long. ";
-
-      openModal(message);
-      fadeModal(3000);
+     {
+       openModal(message);
+       fadeModal(6000)
+       return false;
      }
-});
+ });
 
-function checkSiteNo(site_no) {
-
-    if(typeof site_no === "undefined")
-      {
-        var message = "Incorrectly formatted USGS site number: ";
-        message    += "You must use the USGS station numbers, which are a number ";
-        message    += "from 8 to 15 digits long. ";
-        openModal(message);
-        fadeModal(10000)
-        return false;
-      }
-    //site_no  = site_no.trim();
-    site_no  = site_no.replace(/^\s+|\s+$/g,'');
-    var myRe = /^(\d{8,15})$/g;
-    if(!myRe.test(site_no))
-      {
-        var message = "Incorrectly formatted USGS site number: ";
-        message    += "You must use the USGS station numbers, which are a number ";
-        message    += "from 8 to 15 digits long. ";
-        openModal(message);
-        fadeModal(10000)
-        return false;
-      }
-
-    return site_no;
-}
-
-function wellConstructionService(myWellConstruction)
+function wellConstructionService(site_no, coop_site_no)
   {
    console.log("wellConstructionService");
-   console.log(myWellConstruction.well_construction);
+
+   // Loading message
+   //
+   message  = `Processing well construction information for site ${site_no} ${coop_site_no}`;
+   openModal(message);
+
+   // Build ajax requests
+   //
+   var webRequests  = [];
+
+   // Request for site information
+   //
+   var column       = "site_no";
+   var request_type = "GET";
+   var script_http  = "/cgi-bin/well_construction/requestWellConstruction.py";
+   var data_http    = column + "=" + site_no;
+   var dataType     = "json";
+
+   // Web request
+   //
+   webRequests.push($.ajax( {
+     method:   request_type,
+     url:      script_http,
+     data:     data_http,
+     dataType: dataType,
+     success: function (myData) {
+         message = "Processed well construction information";
+         openModal(message);
+         fadeModal(2000);
+         myWellConstruction = myData;
+         //console.log('myWellConstruction');
+         //console.log(myWellConstruction);
+     },
+     error: function (error) {
+       message = `Failed to load well construction information ${error}`;
+       openModal(message);
+       fadeModal(2000);
+       return false;
+     }
+   }));
+
+   // Request for cooperator site information
+   //
+   if(coop_site_no) {
+
+     console.log(`coop_site_no ${coop_site_no}`);
+
+     var request_type = "GET";
+     var script_http  = `https://apps.wrd.state.or.us/apps/gw/gw_data_rws/api/${coop_site_no}/gw_lithology/`
+     var dataType     = "json";
+
+     // Web request
+     //
+     webRequests.push($.ajax( {
+       method:   request_type,
+       url:      script_http,
+       data:     data_http,
+       dataType: dataType,
+       success: function (myData) {
+         message = "Processed well lithology information";
+         openModal(message);
+         fadeModal(2000);
+         myWellLithology = myData;
+         //console.log('myWellLithology');
+         //console.log(myWellLithology);
+       },
+       error: function (error) {
+         message = `Failed to load well lithology information ${error}`;
+         openModal(message);
+         fadeModal(2000);
+         return false;
+       }
+     }));
+   }
+   //console.log('webRequests');
+   //console.log(webRequests);
+
+   // Run ajax requests
+   //
+   $.when.apply($, webRequests).then(function() {
+
+     fadeModal(2000);
+
+     processWellConstruction(myWellConstruction, myWellLithology);
+   });
+  }
+
+function processWellConstruction(myWellConstruction, myWellLithology)
+  {
+   console.log("wellConstructionService");
+   //console.log(myWellConstruction.well_construction);
+   //console.log(myWellLithology);
 
    // Check for well construction
    //
@@ -185,12 +250,9 @@ function wellConstructionService(myWellConstruction)
       return false;
      }
 
-   // Set well construction data
-   //
-   myConstructionData = myWellConstruction;
-
-   // Call plotting routine
-   //
-   $(document).prop('title', 'Well Construction for site ' + site_no);
-   plotwellConstruction(myWellConstruction);
+    // Call plotting routine
+    //
+    $(document).prop('title', 'Well Construction for site ' + site_no);
+    
+    plotwellConstruction(myWellConstruction, myWellLithology);
   }
